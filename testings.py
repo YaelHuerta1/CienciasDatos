@@ -1,4 +1,4 @@
-import HolaMundo.py as source
+import HolaMundo as source
 
 
 def test_hello_world():
