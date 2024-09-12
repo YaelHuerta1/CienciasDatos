@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 from pandas import pivot_table
+import pandas as pd
 
 output_path = 'output/'
 
@@ -97,9 +98,16 @@ def generate_scatterplot(data, x=None, y=None):
 
 def generate_heatmap(data):
 
-    pivot_table = data.pivot_table(values='edad_reg', index='edad_padn', columns='edad_madn')
+    ocurrencias = pd.concat([data['edad_padn'], data['edad_madn']]).value_counts()
+    data['ocurrencias_totales'] = data['edad_padn'].map(ocurrencias) + data['edad_madn'].map(ocurrencias)
 
-    sns.heatmap(pivot_table, annot=True, cmap='YlGnBu')
+    ocurren = data['ocurrencias_totales']
+
+    pivot = pd.pivot_table(data, values='ocurrencias_totales', index='edad_padn', columns='edad_madn', aggfunc='mean') # VALUES = NUMERO DE OCURRENCIAS
+
+    plt.figure(figsize=(8,6))
+    sns.heatmap(pivot, annot=False, cmap="YlGnBu", cbar=True, linewidths=0.5)
+    plt.title("Mapa de calor de ocurrencias totales")
     plt.show()
 
 def normalize_ (data):
