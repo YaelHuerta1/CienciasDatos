@@ -1,6 +1,7 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
+import math
 
 from pandas import pivot_table
 import pandas as pd
@@ -116,9 +117,7 @@ def normalize_ (data):
     means = data[columns_to_average].mean()
     std_devs = data[columns_to_average].std()
 
-    normalized_data = data.copy()
-    normalized_data[columns_to_average] = normalized_data[columns_to_average].apply(
-        lambda x: ((x - means[x.name]) / std_devs[x.name]) * 1 / (442)
-    )
+    normlized_ = data[columns_to_average].apply(lambda x: ((x - means[x.name]) / std_devs[x.name]) * 1 / math.sqrt(442))
 
-    print(normalized_data)
+    #print(normlized_)
+    return normlized_
