@@ -1,7 +1,11 @@
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 import math
+
+from seaborn import heatmap
+from sklearn.datasets import load_breast_cancer
 
 from pandas import pivot_table
 import pandas as pd
@@ -97,7 +101,10 @@ def generate_scatterplot(data, x=None, y=None):
         plt.savefig(f'{output_path}{x}_{y}_scatterplot.png')
         plt.close()
 
-def generate_heatmap(data):
+def generate_heatmap(data, heat):
+    output_path = f'output/heatmaps/{heat}/'
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
 
     ocurrencias = pd.concat([data['edad_padn'], data['edad_madn']]).value_counts()
     data['ocurrencias_totales'] = data['edad_padn'].map(ocurrencias) + data['edad_madn'].map(ocurrencias)
@@ -108,8 +115,9 @@ def generate_heatmap(data):
 
     plt.figure(figsize=(8,6))
     sns.heatmap(pivot, annot=False, cmap="YlGnBu", cbar=True, linewidths=0.5)
-    plt.title("Mapa de calor de ocurrencias totales")
-    plt.show()
+    plt.title(f"Mapa de calor de {heat}")
+    plt.savefig(f'{output_path}{heat}_heatmap.png')
+    plt.close()
 
 def normalize_ (data):
     columns_to_average = data.columns[:10]
@@ -119,5 +127,17 @@ def normalize_ (data):
 
     normlized_ = data[columns_to_average].apply(lambda x: ((x - means[x.name]) / std_devs[x.name]) * 1 / math.sqrt(442))
 
-    #print(normlized_)
+    # print(normlized_)
     return normlized_
+
+def checkNormalized_ (dataFrames,):
+    mean = dataFrames.mean()
+    std = dataFrames.std()
+
+    is_nomalized = np.allclose(mean, 0, atol=0.1) and np.allclose(std, 1, atol=0.1)
+
+    if is_nomalized:
+        print("Los datos estan Normalizados")
+    else:
+       dataNormalized = normalize_(dataFrames)
+       return dataNormalized
